@@ -157,7 +157,8 @@ async function closeQuestion(sessionId: string, questionId: string, order: numbe
     closedQuestions.add(closeKey);
     const question = await prisma.question.findUnique({ where: { id: questionId } }); if (!question) return;
     const answers = await prisma.participantAnswer.findMany({ where: { questionId, participant: { sessionId } } });
-    const stats = { questionId, order, answered: answers.filter(a => a.answeredAt).length, correct: answers.filter(a => a.isCorrect).length, wrong: answers.filter(a => a.answeredAt && !a.isCorrect).length, unanswered: answers.filter(a => !a.answeredAt).length };
+    const distribution = ['A', 'B', 'C', 'D'].map(key => ({ key, count: answers.filter(answer => answer.answeredAt && answer.selectedKey === key).length }));
+    const stats = { questionId, order, answered: answers.filter(a => a.answeredAt).length, correct: answers.filter(a => a.isCorrect).length, wrong: answers.filter(a => a.answeredAt && !a.isCorrect).length, unanswered: answers.filter(a => !a.answeredAt).length, distribution };
     io.to(room(session.gameCode)).emit('question_ended', stats);
     for (const socket of await io.in(room(session.gameCode)).fetchSockets()) {
         const participantId = socket.data.participantId as string | undefined;
