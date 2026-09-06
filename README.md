@@ -13,6 +13,12 @@ A real-time multiplayer technical awareness quiz for college classrooms. One hos
 - CSV export with summary and question-level results
 - Reconnection token support and duplicate-name protection
 
+## Project structure
+
+The frontend keeps shared quiz contracts in `client/src/types`, reusable UI in `client/src/components`, and server-synchronized behavior in `client/src/hooks`. The backend keeps persistence in Prisma and scoring in `server/src/scoringService.ts`.
+
+Question countdowns use the server's `startedAt`, `endsAt`, and `serverNow` timestamps. The host and students therefore render the same authoritative remaining time; they do not start independent 15-second timers.
+
 ## Requirements
 
 Node.js 20+, npm, and PostgreSQL 14+.
