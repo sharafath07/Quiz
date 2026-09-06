@@ -646,6 +646,193 @@ button {
     font: 600 52px 'Space Grotesk'
 }
 
+.final-podium {
+    position: relative;
+    margin: 8vh auto 34px;
+    padding: 36px 28px 0;
+    max-width: 1040px;
+    overflow: hidden;
+    border: 1px solid #3c4b30;
+    border-radius: 14px;
+    background: radial-gradient(circle at 50% 20%, #3b4928 0, transparent 43%), linear-gradient(145deg, #202b1d, #151914 70%);
+    box-shadow: 0 28px 80px #0006
+}
+
+.podium-heading {
+    position: relative;
+    z-index: 1;
+    text-align: center
+}
+
+.podium-kicker {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    color: #d2e966;
+    font-size: 11px;
+    letter-spacing: .18em;
+    font-weight: 700
+}
+
+.podium-heading h2 {
+    margin: 12px 0 8px;
+    font: 600 clamp(28px, 4vw, 50px) 'Space Grotesk';
+    letter-spacing: -.03em
+}
+
+.podium-heading p {
+    margin: 0;
+    color: #9ca895
+}
+
+.podium-stage {
+    position: relative;
+    z-index: 1;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    align-items: end;
+    gap: 18px;
+    min-height: 390px;
+    padding: 70px 20px 0
+}
+
+.podium-sheen {
+    position: absolute;
+    inset: 20px 20% 0;
+    background: radial-gradient(ellipse, #d2e96617, transparent 65%);
+    pointer-events: none
+}
+
+.podium-card {
+    position: relative;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 9px;
+    text-align: center;
+    opacity: 0;
+    animation: podium-enter .7s cubic-bezier(.2, .8, .2, 1) forwards;
+}
+
+.podium-card.place-2 {
+    animation-delay: .16s
+}
+
+.podium-card.place-1 {
+    animation-delay: .34s;
+    z-index: 2
+}
+
+.podium-card.place-3 {
+    animation-delay: .03s
+}
+
+.podium-avatar {
+    display: grid;
+    place-items: center;
+    width: 64px;
+    height: 64px;
+    border-radius: 50%;
+    color: #1a2117;
+    font: 700 24px 'Space Grotesk';
+    background: #aab89b;
+    box-shadow: 0 0 0 7px #aab89b1c, 0 12px 28px #0006
+}
+
+.place-1 .podium-avatar {
+    width: 82px;
+    height: 82px;
+    color: #332810;
+    background: #edc56d;
+    box-shadow: 0 0 0 9px #edc56d1c, 0 0 35px #edc56d55
+}
+
+.place-3 .podium-avatar {
+    color: #3c2922;
+    background: #c78b69
+}
+
+.podium-medal {
+    color: #9ca895;
+    font-size: 10px;
+    letter-spacing: .16em;
+    font-weight: 700
+}
+
+.place-1 .podium-medal {
+    color: #edc56d
+}
+
+.podium-card>strong {
+    max-width: 100%;
+    overflow: hidden;
+    color: #f4f0e8;
+    font: 600 clamp(17px, 2vw, 25px) 'Space Grotesk';
+    text-overflow: ellipsis;
+    white-space: nowrap
+}
+
+.podium-card>b {
+    color: #d2e966;
+    font: 700 clamp(22px, 3vw, 34px) 'Space Grotesk'
+}
+
+.podium-card small {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: #9ca895;
+    font-size: 12px
+}
+
+.podium-block {
+    display: grid;
+    place-items: center;
+    width: 100%;
+    height: 92px;
+    margin-top: 9px;
+    border: 1px solid #aab89b33;
+    border-bottom: 0;
+    border-radius: 10px 10px 0 0;
+    background: linear-gradient(180deg, #aab89b30, #aab89b08);
+    color: #aab89b;
+    font: 700 48px 'Space Grotesk'
+}
+
+.place-1 .podium-block {
+    height: 148px;
+    border-color: #edc56d55;
+    background: linear-gradient(180deg, #edc56d42, #edc56d0a);
+    color: #edc56d
+}
+
+.place-3 .podium-block {
+    height: 66px;
+    border-color: #c78b6944;
+    background: linear-gradient(180deg, #c78b6935, #c78b6908);
+    color: #c78b69
+}
+
+@keyframes podium-enter {
+    from {
+        opacity: 0;
+        transform: translateY(42px) scale(.94)
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1)
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .podium-card {
+        animation: none;
+        opacity: 1
+    }
+}
+
 .analytics {
     margin: 46px 0 24px;
     padding: 28px;
@@ -663,8 +850,14 @@ button {
     margin-bottom: 25px
 }
 
-.analytics-heading .eyebrow { margin: 0 0 8px }
-.analytics-heading h2 { margin: 0; font: 600 28px 'Space Grotesk' }
+.analytics-heading .eyebrow {
+    margin: 0 0 8px
+}
+
+.analytics-heading h2 {
+    margin: 0;
+    font: 600 28px 'Space Grotesk'
+}
 
 .analytics-status {
     display: flex;
@@ -705,7 +898,10 @@ button {
 }
 
 .analytics-metric:hover,
-.analytics-insight:hover { border-color: #687a4a; transform: translateY(-2px) }
+.analytics-insight:hover {
+    border-color: #687a4a;
+    transform: translateY(-2px)
+}
 
 .metric-icon,
 .insight-icon {
@@ -717,26 +913,101 @@ button {
     border-radius: 7px
 }
 
-.analytics-metric > div:last-child,
-.analytics-insight > div:last-child { display: grid; gap: 4px; min-width: 0 }
-.analytics-metric span,
-.analytics-insight span { color: #9da796; font-size: 10px; letter-spacing: .08em; font-weight: 700; white-space: nowrap }
-.analytics-metric strong { color: #f3f5ed; font: 700 28px 'Space Grotesk'; letter-spacing: -.02em }
-.analytics-metric small,
-.analytics-insight small { color: #778373; font-size: 11px; white-space: nowrap }
-.analytics-insight strong { color: #f3f5ed; font: 700 24px 'Space Grotesk' }
-.analytics-insight em { color: #5f6d58; font-style: normal }
+.analytics-metric>div:last-child,
+.analytics-insight>div:last-child {
+    display: grid;
+    gap: 4px;
+    min-width: 0
+}
 
-.analytics-divider { display: flex; align-items: center; gap: 14px; margin: 28px 0 14px; color: #778373; font-size: 10px; letter-spacing: .16em; font-weight: 700 }
-.analytics-divider i { height: 1px; flex: 1; background: #303b2c }
-.analytics-metric.lime .metric-icon, .analytics-insight.lime .insight-icon { color: #d2e966; background: #344329 }
-.analytics-metric.gold .metric-icon, .analytics-insight.gold .insight-icon { color: #edc56d; background: #463b25 }
-.analytics-metric.blue .metric-icon, .analytics-insight.blue .insight-icon { color: #8fc8df; background: #263b43 }
-.analytics-metric.coral .metric-icon, .analytics-insight.coral .insight-icon { color: #ef9b8d; background: #452b29 }
-.analytics-insight.lime strong { color: #d2e966 }
-.analytics-insight.coral strong { color: #ef9b8d }
-.analytics-insight.blue strong { color: #8fc8df }
-.analytics-insight.gold strong { color: #edc56d }
+.analytics-metric span,
+.analytics-insight span {
+    color: #9da796;
+    font-size: 10px;
+    letter-spacing: .08em;
+    font-weight: 700;
+    white-space: nowrap
+}
+
+.analytics-metric strong {
+    color: #f3f5ed;
+    font: 700 28px 'Space Grotesk';
+    letter-spacing: -.02em
+}
+
+.analytics-metric small,
+.analytics-insight small {
+    color: #778373;
+    font-size: 11px;
+    white-space: nowrap
+}
+
+.analytics-insight strong {
+    color: #f3f5ed;
+    font: 700 24px 'Space Grotesk'
+}
+
+.analytics-insight em {
+    color: #5f6d58;
+    font-style: normal
+}
+
+.analytics-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 28px 0 14px;
+    color: #778373;
+    font-size: 10px;
+    letter-spacing: .16em;
+    font-weight: 700
+}
+
+.analytics-divider i {
+    height: 1px;
+    flex: 1;
+    background: #303b2c
+}
+
+.analytics-metric.lime .metric-icon,
+.analytics-insight.lime .insight-icon {
+    color: #d2e966;
+    background: #344329
+}
+
+.analytics-metric.gold .metric-icon,
+.analytics-insight.gold .insight-icon {
+    color: #edc56d;
+    background: #463b25
+}
+
+.analytics-metric.blue .metric-icon,
+.analytics-insight.blue .insight-icon {
+    color: #8fc8df;
+    background: #263b43
+}
+
+.analytics-metric.coral .metric-icon,
+.analytics-insight.coral .insight-icon {
+    color: #ef9b8d;
+    background: #452b29
+}
+
+.analytics-insight.lime strong {
+    color: #d2e966
+}
+
+.analytics-insight.coral strong {
+    color: #ef9b8d
+}
+
+.analytics-insight.blue strong {
+    color: #8fc8df
+}
+
+.analytics-insight.gold strong {
+    color: #edc56d
+}
 
 .question-result {
     max-width: 720px;
@@ -901,14 +1172,100 @@ button {
         padding: 24px 18px
     }
 
-    .analytics { padding: 20px; margin-top: 32px }
-    .analytics-heading { flex-direction: column; gap: 12px }
-    .analytics-heading h2 { font-size: 24px }
-    .analytics-grid, .highlight-grid { grid-template-columns: 1fr 1fr }
-    .analytics-metric, .analytics-insight { padding: 13px; gap: 9px }
-    .metric-icon, .insight-icon { width: 30px; height: 30px }
-    .analytics-metric strong { font-size: 22px }
-    .analytics-metric small, .analytics-insight small { white-space: normal }
+    .analytics {
+        padding: 20px;
+        margin-top: 32px
+    }
+
+    .analytics-heading {
+        flex-direction: column;
+        gap: 12px
+    }
+
+    .analytics-heading h2 {
+        font-size: 24px
+    }
+
+    .analytics-grid,
+    .highlight-grid {
+        grid-template-columns: 1fr 1fr
+    }
+
+    .analytics-metric,
+    .analytics-insight {
+        padding: 13px;
+        gap: 9px
+    }
+
+    .metric-icon,
+    .insight-icon {
+        width: 30px;
+        height: 30px
+    }
+
+    .analytics-metric strong {
+        font-size: 22px
+    }
+
+    .analytics-metric small,
+    .analytics-insight small {
+        white-space: normal
+    }
+
+    .final-podium {
+        margin-top: 5vh;
+        padding: 26px 12px 0
+    }
+
+    .podium-heading h2 {
+        font-size: 28px
+    }
+
+    .podium-heading p {
+        font-size: 13px
+    }
+
+    .podium-stage {
+        gap: 7px;
+        min-height: 300px;
+        padding: 50px 0 0
+    }
+
+    .podium-avatar {
+        width: 48px;
+        height: 48px;
+        font-size: 18px
+    }
+
+    .place-1 .podium-avatar {
+        width: 62px;
+        height: 62px
+    }
+
+    .podium-card>strong {
+        font-size: 15px
+    }
+
+    .podium-card>b {
+        font-size: 20px
+    }
+
+    .podium-card small {
+        font-size: 10px
+    }
+
+    .podium-block {
+        height: 65px;
+        font-size: 34px
+    }
+
+    .place-1 .podium-block {
+        height: 105px
+    }
+
+    .place-3 .podium-block {
+        height: 47px
+    }
 }
 
 .result-leaderboard {
