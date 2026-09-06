@@ -18,6 +18,7 @@ app.use(express.json());
 const cleanName = (name: string) => name.trim().replace(/[^a-zA-Z0-9 ._'-]/g, '').slice(0, 28);
 const room = (gameCode: string) => `game:${gameCode}`;
 const code = () => `TECH${randomBytes(2).toString('hex').toUpperCase()}`;
+const closedQuestions = new Set<string>();
 
 type QuestionPayload = { id: string; order: number; text: string; options: { key: string; text: string }[]; timeLimit: number; startedAt: string; endsAt: string };
 const shuffle = <T,>(items: T[]) => [...items].sort(() => Math.random() - 0.5);
@@ -151,6 +152,9 @@ async function broadcastQuestion(sessionId: string, questionOrder: number) {
 }
 async function closeQuestion(sessionId: string, questionId: string, order: number) {
     const session = await prisma.quizSession.findUnique({ where: { id: sessionId }, include: { quiz: true } }); if (!session || session.currentOrder !== order) return;
+    const closeKey = `${sessionId}:${questionId}`;
+    if (closedQuestions.has(closeKey)) return;
+    closedQuestions.add(closeKey);
     const question = await prisma.question.findUnique({ where: { id: questionId } }); if (!question) return;
     const answers = await prisma.participantAnswer.findMany({ where: { questionId, participant: { sessionId } } });
     const stats = { questionId, order, answered: answers.filter(a => a.answeredAt).length, correct: answers.filter(a => a.isCorrect).length, wrong: answers.filter(a => a.answeredAt && !a.isCorrect).length, unanswered: answers.filter(a => !a.answeredAt).length };
@@ -208,6 +212,9 @@ io.on('connection', socket => {
         const selectedOption = displayedOptions.find(option => option.key === selectedKey); if (!selectedOption) return callback?.({ error: 'Invalid answer option.' });
         const answeredAt = new Date(); const timeTaken = Math.min(question.timeLimit, Math.max(0, (answeredAt.getTime() - answer.startedAt.getTime()) / 1000)); const isCorrect = selectedOption.correctKey === question.correctKey; const score = scoreAnswer(isCorrect, timeTaken, question.timeLimit);
         await prisma.participantAnswer.update({ where: { id: answer.id }, data: { selectedKey, answeredAt, timeTaken, isCorrect, score } }); callback?.({ ok: true }); io.to(room(session.gameCode)).emit('answer_received', { participantId }); await emitLeaderboard(sessionId);
+        const activeAnswers = await prisma.participantAnswer.count({ where: { questionId, participant: { sessionId } } });
+        const answeredAnswers = await prisma.participantAnswer.count({ where: { questionId, participant: { sessionId }, answeredAt: { not: null } } });
+        if (activeAnswers > 0 && activeAnswers === answeredAnswers) await closeQuestion(sessionId, questionId, session.currentOrder ?? 0);
     });
     socket.on('host_end_game', async ({ sessionId }) => { const session = await prisma.quizSession.update({ where: { id: sessionId }, data: { status: 'FINISHED' } }); io.to(room(session.gameCode)).emit('game_finished', await getLeaderboard(sessionId)); });
 });

@@ -568,7 +568,8 @@ button {
 }
 
 .leaderboard {
-    border-top: 1px solid #30392b
+    border-top: 1px solid #30392b;
+    overflow-x: auto
 }
 
 .leader-head,
@@ -807,4 +808,12 @@ button {
     .app-shell {
         padding: 24px 18px
     }
+}
+
+.result-leaderboard {
+    margin-top: 48px
+}
+
+.host-result {
+    max-width: 1000px
 }
