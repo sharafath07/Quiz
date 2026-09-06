@@ -814,6 +814,53 @@ button {
     margin-top: 48px
 }
 
+.player-view .leaderboard {
+    display: none
+}
+
+.personal-performance {
+    display: grid;
+    gap: 10px;
+    padding: 24px;
+    margin: 24px 0;
+    border: 1px solid #53633f;
+    border-radius: 8px;
+    background: #20281d
+}
+
+.personal-performance span {
+    color: #a9afa5;
+    font-size: 11px;
+    letter-spacing: .14em;
+    font-weight: 700
+}
+
+.personal-performance strong {
+    color: #d2e966;
+    font: 700 48px 'Space Grotesk'
+}
+
+.personal-performance b {
+    font-size: 20px
+}
+
+.rank-movement {
+    display: inline-block;
+    font: 700 18px 'Space Grotesk'
+}
+
+.rank-movement.up {
+    color: #b9e56c
+}
+
+.rank-movement.down {
+    color: #ef9b8d
+}
+
+.rank-movement.same {
+    color: #a9afa5
+}
+
 .host-result {
     max-width: 1000px
 }
