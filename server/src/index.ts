@@ -211,7 +211,7 @@ io.on('connection', socket => {
         const displayedOptions = Array.isArray(answer.displayedOptions) ? answer.displayedOptions as Array<{ key: string; correctKey: string }> : [];
         const selectedOption = displayedOptions.find(option => option.key === selectedKey); if (!selectedOption) return callback?.({ error: 'Invalid answer option.' });
         const answeredAt = new Date(); const timeTaken = Math.min(question.timeLimit, Math.max(0, (answeredAt.getTime() - answer.startedAt.getTime()) / 1000)); const isCorrect = selectedOption.correctKey === question.correctKey; const score = scoreAnswer(isCorrect, timeTaken, question.timeLimit);
-        await prisma.participantAnswer.update({ where: { id: answer.id }, data: { selectedKey, answeredAt, timeTaken, isCorrect, score } }); callback?.({ ok: true }); io.to(room(session.gameCode)).emit('answer_received', { participantId }); await emitLeaderboard(sessionId);
+        await prisma.participantAnswer.update({ where: { id: answer.id }, data: { selectedKey, answeredAt, timeTaken, isCorrect, score } }); callback?.({ ok: true }); io.to(room(session.gameCode)).emit('answer_received', { participantId });
         const activeAnswers = await prisma.participantAnswer.count({ where: { questionId, participant: { sessionId } } });
         const answeredAnswers = await prisma.participantAnswer.count({ where: { questionId, participant: { sessionId }, answeredAt: { not: null } } });
         if (activeAnswers > 0 && activeAnswers === answeredAnswers) await closeQuestion(sessionId, questionId, session.currentOrder ?? 0);
