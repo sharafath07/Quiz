@@ -139,6 +139,16 @@ async function closeQuestion(sessionId: string, questionId: string, order: numbe
 }
 
 io.on('connection', socket => {
+    socket.on('host_join_session', async ({ sessionId }, callback) => {
+        try {
+            const session = await prisma.quizSession.findUnique({ where: { id: String(sessionId) } });
+            if (!session) return callback?.({ error: 'Session not found.' });
+            socket.join(room(session.gameCode));
+            callback?.({ ok: true, state: await sessionState(session.id) });
+        } catch {
+            callback?.({ error: 'Unable to join host session.' });
+        }
+    });
     socket.on('join_game', async ({ gameCode, name, reconnectToken }, callback) => {
         try {
             const normalizedCode = String(gameCode ?? '').trim().toUpperCase(); const clean = cleanName(String(name ?? ''));
