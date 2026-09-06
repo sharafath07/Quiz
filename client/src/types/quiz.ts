@@ -22,6 +22,8 @@ export type Question = {
     startedAt: string;
     endsAt: string;
     serverNow?: string;
+    answered?: boolean;
+    selectedKey?: string | null;
 };
 
 export type QuestionResult = {

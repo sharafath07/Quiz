@@ -162,8 +162,8 @@ async function sendQuestionToSocket(socket: any, sessionId: string) {
     const participantId = socket.data.participantId as string | undefined;
     const answer = participantId ? await prisma.participantAnswer.findUnique({ where: { participantId_questionId: { participantId, questionId: question.id } } }) : null;
     const options = (Array.isArray(answer?.displayedOptions) ? answer.displayedOptions : randomizedOptions({ options: question.options as string[] })) as Array<{ key: string; text: string; correctKey: string }>;
-    const payload: Record<string, unknown> = { id: question.id, order: session.currentOrder, text: question.text, options: options.map((option: any) => ({ key: option.key, text: option.text })), timeLimit: question.timeLimit, startedAt: session.questionStartedAt.toISOString(), endsAt: session.questionEndsAt.toISOString(), serverNow: new Date().toISOString() };
-    if (!participantId) {
+    const payload: Record<string, unknown> = { id: question.id, order: session.currentOrder, text: question.text, options: options.map((option: any) => ({ key: option.key, text: option.text })), timeLimit: question.timeLimit, startedAt: session.questionStartedAt.toISOString(), endsAt: session.questionEndsAt.toISOString(), serverNow: new Date().toISOString(), answered: Boolean(answer?.answeredAt), selectedKey: answer?.selectedKey ?? null };
+    if (!participantId && !socket.data.isHost) {
         const correctOption = options.find((option: any) => option.correctKey === question.correctKey);
         payload.correctAnswer = correctOption ? { key: correctOption.key, text: correctOption.text } : null;
     }
@@ -198,6 +198,7 @@ async function closeQuestion(sessionId: string, questionId: string, order: numbe
     const fastestAnswer = answers.filter(answer => answer.isCorrect && answer.answeredAt && answer.timeTaken !== null).sort((a, b) => (a.timeTaken ?? Infinity) - (b.timeTaken ?? Infinity))[0];
     const fastestParticipant = fastestAnswer ? await prisma.participant.findUnique({ where: { id: fastestAnswer.participantId }, select: { name: true } }) : null;
     const fastestCorrect = fastestAnswer && fastestParticipant ? { name: fastestParticipant.name, timeTaken: fastestAnswer.timeTaken } : null;
+    await prisma.quizSession.update({ where: { id: sessionId }, data: { status: 'REVEAL' } });
     io.to(room(session.gameCode)).emit('question_ended', stats);
     for (const socket of await io.in(room(session.gameCode)).fetchSockets()) {
         const participantId = socket.data.participantId as string | undefined;
@@ -209,7 +210,6 @@ async function closeQuestion(sessionId: string, questionId: string, order: numbe
         socket.emit('question_result', { ...stats, fastestCorrect, correctAnswer: correctOption ? { key: correctOption.key, text: correctOption.text } : null, yourAnswer: selectedOption ? { key: selectedOption.key, text: selectedOption.text } : null, isCorrect: answer?.isCorrect ?? false, timeTaken: answer?.timeTaken ?? null, score: answer?.score ?? 0 });
     }
     io.to(room(session.gameCode)).emit('fastest_correct', fastestCorrect);
-    await emitLeaderboard(sessionId);
 }
 
 io.on('connection', socket => {
@@ -218,6 +218,7 @@ io.on('connection', socket => {
             const session = await prisma.quizSession.findUnique({ where: { id: String(sessionId) } });
             if (!session) return callback?.({ error: 'Session not found.' });
             socket.join(room(session.gameCode));
+            socket.data = { isHost: true, sessionId: session.id, gameCode: session.gameCode };
             callback?.({ ok: true, state: await sessionState(session.id) });
         } catch {
             callback?.({ error: 'Unable to join host session.' });
@@ -243,7 +244,8 @@ io.on('connection', socket => {
         } catch { callback({ error: 'Unable to join quiz.' }); }
     });
     socket.on('host_start_game', async ({ sessionId }, callback) => { const session = await prisma.quizSession.findUnique({ where: { id: sessionId } }); if (!session || session.status !== 'LOBBY') return callback?.({ error: 'Quiz cannot be started.' }); socket.join(room(session.gameCode)); await broadcastQuestion(sessionId, 1); callback?.({ ok: true }); });
-    socket.on('host_next_question', async ({ sessionId }, callback) => { const session = await prisma.quizSession.findUnique({ where: { id: sessionId } }); if (!session || !session.currentOrder) return callback?.({ error: 'No active question.' }); if (session.currentOrder >= 40) { await prisma.quizSession.update({ where: { id: sessionId }, data: { status: 'FINISHED' } }); io.to(room(session.gameCode)).emit('game_finished', await getLeaderboard(sessionId)); return callback?.({ ok: true }); } await broadcastQuestion(sessionId, session.currentOrder + 1); callback?.({ ok: true }); });
+    socket.on('host_view_leaderboard', async ({ sessionId }, callback) => { const session = await prisma.quizSession.findUnique({ where: { id: sessionId } }); if (!session || session.status !== 'REVEAL') return callback?.({ error: 'The answer reveal is not ready.' }); await prisma.quizSession.update({ where: { id: sessionId }, data: { status: 'LEADERBOARD' } }); await emitLeaderboard(sessionId); io.to(room(session.gameCode)).emit('leaderboard_opened'); callback?.({ ok: true }); });
+    socket.on('host_next_question', async ({ sessionId }, callback) => { const session = await prisma.quizSession.findUnique({ where: { id: sessionId } }); if (!session || session.status !== 'LEADERBOARD' || !session.currentOrder) return callback?.({ error: 'Open the leaderboard before moving on.' }); if (session.currentOrder >= 40) { await prisma.quizSession.update({ where: { id: sessionId }, data: { status: 'FINISHED' } }); io.to(room(session.gameCode)).emit('game_finished', await getLeaderboard(sessionId)); return callback?.({ ok: true }); } await broadcastQuestion(sessionId, session.currentOrder + 1); callback?.({ ok: true }); });
     socket.on('submit_answer', async ({ questionId, selectedKey }, callback) => {
         const { sessionId, participantId } = socket.data as { sessionId?: string; participantId?: string }; if (!sessionId || !participantId) return callback?.({ error: 'Not joined.' });
         const session = await prisma.quizSession.findUnique({ where: { id: sessionId } }); if (!session || session.questionEndsAt && session.questionEndsAt.getTime() < Date.now()) return callback?.({ error: 'Time is up.' });

@@ -43,6 +43,8 @@ model Question {
 enum SessionStatus {
   LOBBY
   ACTIVE
+  REVEAL
+  LEADERBOARD
   FINISHED
 }
 
