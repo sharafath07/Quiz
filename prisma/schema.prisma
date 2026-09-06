@@ -1,0 +1,93 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Host {
+  id        String    @id @default(cuid())
+  name      String
+  createdAt DateTime  @default(now())
+  quizzes   Quiz[]
+  sessions  QuizSession[]
+}
+
+model Quiz {
+  id        String    @id @default(cuid())
+  title     String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+  hostId    String?
+  host      Host?     @relation(fields: [hostId], references: [id])
+  questions Question[]
+  sessions  QuizSession[]
+}
+
+model Question {
+  id          String    @id @default(cuid())
+  quizId      String
+  quiz        Quiz      @relation(fields: [quizId], references: [id], onDelete: Cascade)
+  order       Int
+  text        String
+  options     Json
+  correctKey  String
+  timeLimit   Int       @default(15)
+  answers     ParticipantAnswer[]
+  @@unique([quizId, order])
+  @@index([quizId])
+}
+
+enum SessionStatus {
+  LOBBY
+  ACTIVE
+  FINISHED
+}
+
+model QuizSession {
+  id            String        @id @default(cuid())
+  gameCode      String        @unique
+  quizId        String
+  quiz          Quiz          @relation(fields: [quizId], references: [id])
+  hostId        String?
+  host          Host?         @relation(fields: [hostId], references: [id])
+  status        SessionStatus @default(LOBBY)
+  currentOrder  Int?
+  questionStartedAt DateTime?
+  questionEndsAt DateTime?
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  participants  Participant[]
+  @@index([status])
+}
+
+model Participant {
+  id          String             @id @default(cuid())
+  sessionId   String
+  session     QuizSession        @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  name        String
+  reconnectToken String           @unique
+  joinedAt    DateTime           @default(now())
+  answers     ParticipantAnswer[]
+  @@unique([sessionId, name])
+  @@index([sessionId])
+}
+
+model ParticipantAnswer {
+  id            String      @id @default(cuid())
+  participantId String
+  questionId    String
+  selectedKey   String?
+  displayedOptions Json?
+  isCorrect     Boolean     @default(false)
+  startedAt     DateTime
+  answeredAt    DateTime?
+  timeTaken     Float?
+  score         Int         @default(0)
+  participant   Participant @relation(fields: [participantId], references: [id], onDelete: Cascade)
+  question      Question    @relation(fields: [questionId], references: [id], onDelete: Cascade)
+  @@unique([participantId, questionId])
+  @@index([questionId])
+}
