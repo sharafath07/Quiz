@@ -646,6 +646,98 @@ button {
     font: 600 52px 'Space Grotesk'
 }
 
+.analytics {
+    margin: 46px 0 24px;
+    padding: 28px;
+    border: 1px solid #35432d;
+    border-radius: 12px;
+    background: linear-gradient(145deg, #1c251b, #171b16 72%);
+    box-shadow: 0 20px 50px #0003
+}
+
+.analytics-heading {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 20px;
+    margin-bottom: 25px
+}
+
+.analytics-heading .eyebrow { margin: 0 0 8px }
+.analytics-heading h2 { margin: 0; font: 600 28px 'Space Grotesk' }
+
+.analytics-status {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    color: #9ca895;
+    font-size: 10px;
+    letter-spacing: .14em;
+    font-weight: 700
+}
+
+.analytics-status i {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    background: #d2e966;
+    box-shadow: 0 0 12px #d2e966
+}
+
+.analytics-grid,
+.highlight-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 12px
+}
+
+.analytics-metric,
+.analytics-insight {
+    display: flex;
+    align-items: flex-start;
+    gap: 13px;
+    min-width: 0;
+    padding: 17px;
+    border: 1px solid #303b2c;
+    border-radius: 8px;
+    background: #20271e;
+    transition: border-color .2s, transform .2s
+}
+
+.analytics-metric:hover,
+.analytics-insight:hover { border-color: #687a4a; transform: translateY(-2px) }
+
+.metric-icon,
+.insight-icon {
+    flex: 0 0 auto;
+    display: grid;
+    place-items: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 7px
+}
+
+.analytics-metric > div:last-child,
+.analytics-insight > div:last-child { display: grid; gap: 4px; min-width: 0 }
+.analytics-metric span,
+.analytics-insight span { color: #9da796; font-size: 10px; letter-spacing: .08em; font-weight: 700; white-space: nowrap }
+.analytics-metric strong { color: #f3f5ed; font: 700 28px 'Space Grotesk'; letter-spacing: -.02em }
+.analytics-metric small,
+.analytics-insight small { color: #778373; font-size: 11px; white-space: nowrap }
+.analytics-insight strong { color: #f3f5ed; font: 700 24px 'Space Grotesk' }
+.analytics-insight em { color: #5f6d58; font-style: normal }
+
+.analytics-divider { display: flex; align-items: center; gap: 14px; margin: 28px 0 14px; color: #778373; font-size: 10px; letter-spacing: .16em; font-weight: 700 }
+.analytics-divider i { height: 1px; flex: 1; background: #303b2c }
+.analytics-metric.lime .metric-icon, .analytics-insight.lime .insight-icon { color: #d2e966; background: #344329 }
+.analytics-metric.gold .metric-icon, .analytics-insight.gold .insight-icon { color: #edc56d; background: #463b25 }
+.analytics-metric.blue .metric-icon, .analytics-insight.blue .insight-icon { color: #8fc8df; background: #263b43 }
+.analytics-metric.coral .metric-icon, .analytics-insight.coral .insight-icon { color: #ef9b8d; background: #452b29 }
+.analytics-insight.lime strong { color: #d2e966 }
+.analytics-insight.coral strong { color: #ef9b8d }
+.analytics-insight.blue strong { color: #8fc8df }
+.analytics-insight.gold strong { color: #edc56d }
+
 .question-result {
     max-width: 720px;
     margin: auto
@@ -808,6 +900,15 @@ button {
     .app-shell {
         padding: 24px 18px
     }
+
+    .analytics { padding: 20px; margin-top: 32px }
+    .analytics-heading { flex-direction: column; gap: 12px }
+    .analytics-heading h2 { font-size: 24px }
+    .analytics-grid, .highlight-grid { grid-template-columns: 1fr 1fr }
+    .analytics-metric, .analytics-insight { padding: 13px; gap: 9px }
+    .metric-icon, .insight-icon { width: 30px; height: 30px }
+    .analytics-metric strong { font-size: 22px }
+    .analytics-metric small, .analytics-insight small { white-space: normal }
 }
 
 .result-leaderboard {
