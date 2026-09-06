@@ -194,7 +194,8 @@ async function closeQuestion(sessionId: string, questionId: string, order: numbe
     const question = await prisma.question.findUnique({ where: { id: questionId } }); if (!question) return;
     const answers = await prisma.participantAnswer.findMany({ where: { questionId, participant: { sessionId } } });
     const distribution = ['A', 'B', 'C', 'D'].map(key => ({ key, count: answers.filter(answer => answer.answeredAt && answer.selectedKey === key).length }));
-    const stats = { questionId, order, answered: answers.filter(a => a.answeredAt).length, correct: answers.filter(a => a.isCorrect).length, wrong: answers.filter(a => a.answeredAt && !a.isCorrect).length, unanswered: answers.filter(a => !a.answeredAt).length, distribution };
+    const questionOptions = question.options as string[];
+    const stats = { questionId, order, correctAnswer: { key: question.correctKey, text: questionOptions[question.correctKey.charCodeAt(0) - 65] }, answered: answers.filter(a => a.answeredAt).length, correct: answers.filter(a => a.isCorrect).length, wrong: answers.filter(a => a.answeredAt && !a.isCorrect).length, unanswered: answers.filter(a => !a.answeredAt).length, distribution };
     const fastestAnswer = answers.filter(answer => answer.isCorrect && answer.answeredAt && answer.timeTaken !== null).sort((a, b) => (a.timeTaken ?? Infinity) - (b.timeTaken ?? Infinity))[0];
     const fastestParticipant = fastestAnswer ? await prisma.participant.findUnique({ where: { id: fastestAnswer.participantId }, select: { name: true } }) : null;
     const fastestCorrect = fastestAnswer && fastestParticipant ? { name: fastestParticipant.name, timeTaken: fastestAnswer.timeTaken } : null;
