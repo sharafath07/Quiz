@@ -54,6 +54,7 @@ model QuizSession {
   hostId        String?
   host          Host?         @relation(fields: [hostId], references: [id])
   status        SessionStatus @default(LOBBY)
+  questionOrder Json?
   currentOrder  Int?
   questionStartedAt DateTime?
   questionEndsAt DateTime?

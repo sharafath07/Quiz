@@ -574,7 +574,7 @@ button {
 .leader-head,
 .leader-row {
     display: grid;
-    grid-template-columns: 55px 1fr 100px;
+    grid-template-columns: 55px minmax(130px, 1fr) 85px 90px 100px;
     gap: 12px;
     align-items: center;
     padding: 13px 0;
@@ -591,8 +591,21 @@ button {
     text-align: right
 }
 
+.leader-head span:nth-last-child(2),
+.leader-row span:nth-last-child(2) {
+    text-align: right
+}
+
+.leader-row span:nth-child(3),
+.leader-row span:nth-child(4) {
+    color: #a9afa5;
+    text-align: right;
+    font-size: 12px
+}
+
 .leader-row {
-    color: #d9ddd4
+    color: #d9ddd4;
+    cursor: pointer
 }
 
 .leader-row b {
@@ -630,6 +643,109 @@ button {
 
 .results-wrap h1 {
     font: 600 52px 'Space Grotesk'
+}
+
+.question-result {
+    max-width: 720px;
+    margin: auto
+}
+
+.question-result h1 {
+    font: 600 clamp(42px, 7vw, 72px)/1 'Space Grotesk';
+    margin: 14px 0 35px
+}
+
+.result-detail {
+    display: grid;
+    gap: 7px;
+    padding: 18px 0;
+    border-bottom: 1px solid #30392b
+}
+
+.result-detail span,
+.result-metrics span {
+    color: #899286;
+    font-size: 11px;
+    letter-spacing: .14em;
+    font-weight: 700
+}
+
+.result-detail strong {
+    font-size: 19px
+}
+
+.result-metrics,
+.answer-stats {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    margin-top: 24px
+}
+
+.result-metrics div,
+.answer-stats span {
+    display: grid;
+    gap: 7px;
+    padding: 16px;
+    background: #20251e;
+    border: 1px solid #36422f;
+    border-radius: 6px
+}
+
+.result-metrics strong {
+    color: #d2e966;
+    font: 700 25px 'Space Grotesk'
+}
+
+.correct-answer {
+    color: #d2e966;
+    border-left: 3px solid #d2e966;
+    padding: 14px 16px;
+    background: #20251e
+}
+
+.answer-stats {
+    grid-template-columns: repeat(4, 1fr)
+}
+
+.answer-stats span {
+    color: #a9afa5;
+    font-size: 11px
+}
+
+.answer-stats strong {
+    color: #f4f0e8;
+    font-size: 22px
+}
+
+.participant-report {
+    margin-top: 28px;
+    overflow-x: auto
+}
+
+.participant-report h3 {
+    font: 600 28px 'Space Grotesk';
+    margin-bottom: 4px
+}
+
+.participant-report p {
+    color: #899286
+}
+
+.report-row {
+    min-width: 760px;
+    display: grid;
+    grid-template-columns: 45px 2fr 1fr 100px 70px 65px;
+    gap: 12px;
+    align-items: center;
+    padding: 13px 0;
+    border-bottom: 1px solid #2d352a;
+    color: #c8cec3;
+    font-size: 13px
+}
+
+.report-row span:first-child {
+    color: #d2e966
 }
 
 @media(max-width:800px) {
