@@ -4,6 +4,8 @@ import { io, Socket } from "socket.io-client";
 import QRCode from "qrcode";
 import {
     ArrowRight,
+    ArrowUp,
+    ArrowDown,
     Check,
     Copy,
     MonitorPlay,
@@ -283,7 +285,7 @@ function Join() {
                         </div>
                         {personalRank?.movement !== null && personalRank?.movement !== undefined ? (
                             <p className={`rank-movement ${personalRank.movement > 0 ? "up" : personalRank.movement < 0 ? "down" : "same"}`}>
-                                {personalRank.movement > 0 ? `↑ ${personalRank.movement} positions` : personalRank.movement < 0 ? `↓ ${Math.abs(personalRank.movement)} positions` : "• No change"}
+                                {personalRank.movement > 0 ? `${<ArrowUp />} ${personalRank.movement} positions` : personalRank.movement < 0 ? `${<ArrowDown />} ${Math.abs(personalRank.movement)} positions` : "• No change"}
                             </p>
                         ) : <p className="muted">Your first ranking is now recorded.</p>}
                     </div>
