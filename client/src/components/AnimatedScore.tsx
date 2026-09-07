@@ -1,20 +1,45 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from "react";
 
 export function AnimatedScore({ value }: { value: number }) {
     const [display, setDisplay] = useState(value);
+    const displayRef = useRef(value);
 
     useEffect(() => {
-        const start = display;
+        const start = displayRef.current;
         const distance = value - start;
-        if (!distance) return;
+
+        if (!distance) {
+            displayRef.current = value;
+            setDisplay(value);
+            return;
+        }
+
         const started = performance.now();
         let frame = 0;
+
         const tick = (now: number) => {
             const progress = Math.min(1, (now - started) / 550);
-            setDisplay(Math.round(start + distance * (1 - Math.pow(1 - progress, 3))));
-            if (progress < 1) frame = requestAnimationFrame(tick);
+
+            const eased =
+                1 - Math.pow(1 - progress, 3);
+
+            const current = Math.round(
+                start + distance * eased
+            );
+
+            displayRef.current = current;
+            setDisplay(current);
+
+            if (progress < 1) {
+                frame = requestAnimationFrame(tick);
+            } else {
+                displayRef.current = value;
+                setDisplay(value);
+            }
         };
+
         frame = requestAnimationFrame(tick);
+
         return () => cancelAnimationFrame(frame);
     }, [value]);
 

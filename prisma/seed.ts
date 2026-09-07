@@ -42,7 +42,7 @@ const questions = [
     ['Who was the first woman to win a Nobel Prize?', ['Mother Teresa', 'Marie Curie', 'Rosalind Franklin', 'Jane Goodall'], 'B'],
     ['What is the study of plants called?', ['Zoology', 'Botany', 'Biology', 'Ecology'], 'B'],
     ['The ozone layer is found in which layer of the atmosphere?', ['Troposphere', 'Stratosphere', 'Mesosphere', 'Thermosphere'], 'B']
-].map(([text, options, correctKey], index) => ({ text: text as string, options: options as string[], correctKey: correctKey as string, order: index + 1, timeLimit: 15 }));
+].map(([text, options, correctKey], index) => ({ text: text as string, options: options as string[], correctKey: correctKey as string, order: index + 1, timeLimit: 20 }));
 
 async function main() {
     const host = await prisma.host.upsert({ where: { id: 'seed-host' }, update: {}, create: { id: 'seed-host', name: 'Quiz Host' } });

@@ -60,7 +60,7 @@ function Home() {
                         <span>questions</span>
                     </div>
                     <div className="floating-stat stat-two">
-                        <strong>15s</strong>
+                        <strong>20s</strong>
                         <span>per question</span>
                     </div>
                     <div className="floating-stat stat-three">
@@ -170,7 +170,10 @@ function Join() {
             "submit_answer",
             { questionId: question.id, selectedKey: key },
             (result: any) => {
-                if (result.error) setError(result.error);
+                if (result.error) {
+                    setSelected("");
+                    setError(result.error);
+                }
             },
         );
     };
@@ -267,7 +270,12 @@ function Join() {
                         <div className="personal-performance">
                             <span>CURRENT POSITION</span>
                             <strong>#{personalRank?.rank ?? "-"}</strong>
-                            <b>{personalRank?.score?.toLocaleString() ?? result.score.toLocaleString()} points</b>
+                            <b>
+                                <AnimatedScore
+                                    value={personalRank?.score ?? result.score}
+                                />{" "}
+                                points
+                            </b>
                         </div>
                         <div className="result-detail">
                             <span>RESPONSE TIME</span>
@@ -342,7 +350,12 @@ function Join() {
                         </div>
                         <div className="timer-track">
                             <span
-                                style={{ width: `${(time / question.timeLimit) * 100}%` }}
+                                style={{
+                                    width: `${Math.max(
+                                        0,
+                                        Math.min(100, (time / Math.max(1, question.timeLimit)) * 100),
+                                    )}%`,
+                                }}
                             />
                         </div>
                         <h1>{question.text}</h1>
@@ -449,9 +462,20 @@ function Host() {
     useEffect(() => {
         const s = connect();
         s.on("question_started", (nextQuestion: Question) => {
-            setQuestion(nextQuestion);
+            // Never expose the correct answer while the question is live.
+            // The answer is added back only after `question_ended`.
+            const liveQuestion: Question = {
+                ...nextQuestion,
+                correctAnswer: undefined,
+            };
+
+            setQuestion(liveQuestion);
             setQuestionStats(undefined);
             setLeaderboardOpen(false);
+            setAnswerProgress({
+                answered: 0,
+                total: session?.participants?.length ?? 0,
+            });
         });
         s.on("question_ended", (stats: any) => {
             setQuestionStats(stats);
@@ -790,7 +814,12 @@ function Host() {
                             </div>
                             <div className="timer-track">
                                 <span
-                                    style={{ width: `${(time / question.timeLimit) * 100}%` }}
+                                    style={{
+                                        width: `${Math.max(
+                                            0,
+                                            Math.min(100, (time / Math.max(1, question.timeLimit)) * 100),
+                                        )}%`,
+                                    }}
                                 />
                             </div>
                             <h2>{question.text}</h2>
@@ -802,12 +831,6 @@ function Host() {
                                     </div>
                                 ))}
                             </div>
-                            {question.correctAnswer && (
-                                <p className="correct-answer">
-                                    <strong>Correct Answer:</strong> {question.correctAnswer.key}){" "}
-                                    {question.correctAnswer.text}
-                                </p>
-                            )}
                             {questionStats && (
                                 <div className="answer-stats">
                                     <span>
@@ -825,10 +848,6 @@ function Host() {
                                 </div>
                             )}
                             <div className="host-actions">
-                                <button className="primary" onClick={next}>
-                                    {question.order === 40 ? "Finish quiz" : "Next question"}{" "}
-                                    <ArrowRight size={17} />
-                                </button>
                                 <button className="danger" onClick={end}>
                                     End quiz
                                 </button>
