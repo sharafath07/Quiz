@@ -284,8 +284,27 @@ function Join() {
                             <strong>{result.timeTaken === null ? "No answer" : `${result.timeTaken.toFixed(2)} seconds`}</strong>
                         </div>
                         {personalRank?.movement !== null && personalRank?.movement !== undefined ? (
-                            <p className={`rank-movement ${personalRank.movement > 0 ? "up" : personalRank.movement < 0 ? "down" : "same"}`}>
-                                {personalRank.movement > 0 ? `${<ArrowUp />} ${personalRank.movement} positions` : personalRank.movement < 0 ? `${<ArrowDown />} ${Math.abs(personalRank.movement)} positions` : "• No change"}
+                            <p
+                                className={`rank-movement ${personalRank.movement > 0
+                                    ? "up"
+                                    : personalRank.movement < 0
+                                        ? "down"
+                                        : "same"
+                                    }`}
+                            >
+                                {personalRank.movement > 0 ? (
+                                    <>
+                                        <ArrowUp size={16} />
+                                        {personalRank.movement} positions
+                                    </>
+                                ) : personalRank.movement < 0 ? (
+                                    <>
+                                        <ArrowDown size={16} />
+                                        {Math.abs(personalRank.movement)} positions
+                                    </>
+                                ) : (
+                                    <>• No change</>
+                                )}
                             </p>
                         ) : <p className="muted">Your first ranking is now recorded.</p>}
                     </div>
