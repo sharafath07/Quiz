@@ -1,6 +1,6 @@
 # Technical Awareness Live Quiz
 
-A real-time multiplayer technical awareness quiz for college classrooms. One host can run a 40-question, server-timed session for up to 40 students without student accounts.
+A real-time multiplayer technical awareness quiz for college classrooms. One host can run a 40-question, server-timed session for up to 50 students without student accounts.
 
 ## Features
 

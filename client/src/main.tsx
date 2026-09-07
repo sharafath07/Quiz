@@ -74,7 +74,7 @@ function Home() {
             <footer>
                 <span>Built for real classrooms</span>
                 <span>•</span>
-                <span>Up to 40 players</span>
+                <span>Up to 50 players</span>
                 <span>•</span>
                 <span>Server-timed</span>
             </footer>
@@ -303,7 +303,7 @@ function Join() {
                                         {Math.abs(personalRank.movement)} positions
                                     </>
                                 ) : (
-                                    <>• No change</>
+                                    <></>
                                 )}
                             </p>
                         ) : <p className="muted">Your first ranking is now recorded.</p>}
@@ -892,7 +892,7 @@ function Host() {
                         <div className="waiting-list">
                             <div className="panel-title">
                                 <span>CONNECTED STUDENTS</span>
-                                <strong>{session.participants.length} / 40</strong>
+                                <strong>{session.participants.length} / 50</strong>
                             </div>
                             {session.participants.length ? (
                                 session.participants.map((p: any, i: number) => (
