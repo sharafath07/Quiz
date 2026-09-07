@@ -1,6 +1,7 @@
 import { Crown } from "lucide-react";
 import { AnimatedScore } from "./AnimatedScore";
 import type { Leader } from "../types/quiz";
+import { ArrowDown, ArrowUp } from "lucide-react";
 
 function Movement({ value }: { value?: number | null }) {
     if (value === null || value === undefined) {
@@ -17,11 +18,19 @@ function Movement({ value }: { value?: number | null }) {
                         : "movement flat"
             }
         >
-            {value > 0
-                ? `up +${value}`
-                : value < 0
-                    ? `down ${Math.abs(value)}`
-                    : "No change"}
+            {value > 0 ? (
+                <>
+                    <ArrowUp size={14} />
+                    +{value}
+                </>
+            ) : value < 0 ? (
+                <>
+                    <ArrowDown size={14} />
+                    -{Math.abs(value)}
+                </>
+            ) : (
+                "No change"
+            )}
         </small>
     );
 }

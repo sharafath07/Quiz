@@ -1311,11 +1311,23 @@ button {
     color: #b9e56c
 }
 
+.movement.up {
+    color: #b9e56c
+}
+
 .rank-movement.down {
     color: #ef9b8d
 }
 
+.movement.down {
+    color: #ef9b8d
+}
+
 .rank-movement.same {
+    color: #a9afa5
+}
+
+.movement.flat {
     color: #a9afa5
 }
 
