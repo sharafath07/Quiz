@@ -1,6 +1,6 @@
-import type { Leader } from "../types/quiz";
-import { AnimatedScore } from "./AnimatedScore";
-import { Crown, Sparkles, Trophy } from "lucide-react";
+import type { Leader } from '../types/quiz';
+import { AnimatedScore } from './AnimatedScore';
+import { Crown, Sparkles, Trophy } from 'lucide-react';
 
 export function Podium({ leaders }: { leaders: Leader[] }) {
     const places = [leaders[1], leaders[0], leaders[2]];
@@ -30,18 +30,18 @@ export function Podium({ leaders }: { leaders: Leader[] }) {
                                 {leader.rank === 1 ? (
                                     <Crown size={26} />
                                 ) : leader.rank === 2 ? (
-                                    "2"
+                                    '2'
                                 ) : (
-                                    "3"
+                                    '3'
                                 )}
                             </div>
 
                             <span className="podium-medal">
                                 {leader.rank === 1
-                                    ? "CHAMPION"
+                                    ? 'CHAMPION'
                                     : leader.rank === 2
-                                        ? "RUNNER UP"
-                                        : "THIRD PLACE"}
+                                      ? 'RUNNER UP'
+                                      : 'THIRD PLACE'}
                             </span>
 
                             <strong>{leader.name}</strong>
@@ -51,7 +51,8 @@ export function Podium({ leaders }: { leaders: Leader[] }) {
                             </b>
 
                             <small>
-                                <Trophy size={13} /> {leader.correct} correct answers
+                                <Trophy size={13} /> {leader.correct} correct
+                                answers
                             </small>
 
                             <div className="podium-block">
@@ -60,7 +61,7 @@ export function Podium({ leaders }: { leaders: Leader[] }) {
                         </div>
                     ) : (
                         <div className="podium-slot" key={index} />
-                    )
+                    ),
                 )}
             </div>
         </section>
