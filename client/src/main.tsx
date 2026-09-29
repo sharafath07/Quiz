@@ -1,7 +1,7 @@
-import React, { useEffect, useState } from "react";
-import { createRoot } from "react-dom/client";
-import { io, Socket } from "socket.io-client";
-import QRCode from "qrcode";
+import React, { useEffect, useState } from 'react';
+import { createRoot } from 'react-dom/client';
+import { io, Socket } from 'socket.io-client';
+import QRCode from 'qrcode';
 import {
     ArrowRight,
     ArrowUp,
@@ -12,16 +12,16 @@ import {
     Radio,
     Users,
     Zap,
-} from "lucide-react";
-import { AnimatedScore } from "./components/AnimatedScore";
-import { AnalyticsCard } from "./components/AnalyticsCard";
-import { Leaderboard } from "./components/Leaderboard";
-import { Podium } from "./components/Podium";
-import { useServerCountdown } from "./hooks/useServerCountdown";
-import type { Leader, Question, QuestionResult } from "./types/quiz";
-import "./styles.css";
+} from 'lucide-react';
+import { AnimatedScore } from './components/AnimatedScore';
+import { AnalyticsCard } from './components/AnalyticsCard';
+import { Leaderboard } from './components/Leaderboard';
+import { Podium } from './components/Podium';
+import { useServerCountdown } from './hooks/useServerCountdown';
+import type { Leader, Question, QuestionResult } from './types/quiz';
+import './styles.css';
 
-const API = import.meta.env.VITE_API_URL ?? "http://localhost:3000";
+const API = import.meta.env.VITE_API_URL ?? 'http://localhost:3000';
 let socket: Socket | undefined;
 const connect = () => (socket ??= io(API));
 
@@ -40,12 +40,14 @@ function Home() {
                         <em>count.</em>
                     </h1>
                     <p className="lede">
-                        A focused, fast-paced technical awareness quiz for your whole class.
-                        One room, forty questions, real-time results.
+                        A focused, fast-paced technical awareness quiz for your
+                        whole class. One room, forty questions, real-time
+                        results.
                     </p>
                     <div className="home-actions">
                         <a className="primary" href="/host">
-                            <MonitorPlay size={19} /> Host a quiz <ArrowRight size={17} />
+                            <MonitorPlay size={19} /> Host a quiz{' '}
+                            <ArrowRight size={17} />
                         </a>
                         <a className="secondary" href="/join">
                             <Users size={19} /> Join with a code
@@ -83,9 +85,9 @@ function Home() {
 }
 
 function Join() {
-    const [codeValue, setCodeValue] = useState("");
-    const [name, setName] = useState("");
-    const [error, setError] = useState("");
+    const [codeValue, setCodeValue] = useState('');
+    const [name, setName] = useState('');
+    const [error, setError] = useState('');
     const [joined, setJoined] = useState(false);
     const [state, setState] = useState<any>();
     const [question, setQuestion] = useState<Question>();
@@ -94,38 +96,38 @@ function Join() {
     const [personalRank, setPersonalRank] = useState<any>();
     const [progress, setProgress] = useState({ answered: 0, total: 0 });
     const [fastest, setFastest] = useState<any>();
-    const [selected, setSelected] = useState("");
+    const [selected, setSelected] = useState('');
     const time = useServerCountdown(question);
     const [leaders, setLeaders] = useState<Leader[]>([]);
     const [finished, setFinished] = useState(false);
     useEffect(() => {
         const s = connect();
-        s.on("question_started", (q: Question) => {
+        s.on('question_started', (q: Question) => {
             setQuestion(q);
             setResult(undefined);
             setLeaderboardOpen(false);
             setFastest(undefined);
-            setSelected(q.selectedKey ?? "");
+            setSelected(q.selectedKey ?? '');
         });
-        s.on("question_result", setResult);
-        s.on("answer_progress", setProgress);
-        s.on("fastest_correct", setFastest);
-        s.on("personal_rank", setPersonalRank);
-        s.on("leaderboard_updated", setLeaders);
-        s.on("leaderboard_opened", () => setLeaderboardOpen(true));
-        s.on("game_finished", (r: Leader[]) => {
+        s.on('question_result', setResult);
+        s.on('answer_progress', setProgress);
+        s.on('fastest_correct', setFastest);
+        s.on('personal_rank', setPersonalRank);
+        s.on('leaderboard_updated', setLeaders);
+        s.on('leaderboard_opened', () => setLeaderboardOpen(true));
+        s.on('game_finished', (r: Leader[]) => {
             setLeaders(r);
             setFinished(true);
         });
         return () => {
-            s.off("question_started");
-            s.off("question_result");
-            s.off("answer_progress");
-            s.off("fastest_correct");
-            s.off("personal_rank");
-            s.off("leaderboard_updated");
-            s.off("leaderboard_opened");
-            s.off("game_finished");
+            s.off('question_started');
+            s.off('question_result');
+            s.off('answer_progress');
+            s.off('fastest_correct');
+            s.off('personal_rank');
+            s.off('leaderboard_updated');
+            s.off('leaderboard_opened');
+            s.off('game_finished');
         };
     }, []);
     useEffect(() => {
@@ -133,34 +135,38 @@ function Join() {
         const s = connect();
         const rejoin = () =>
             s.emit(
-                "join_game",
+                'join_game',
                 {
                     gameCode: state.gameCode,
                     name,
-                    reconnectToken: localStorage.getItem("quizReconnectToken"),
+                    reconnectToken: localStorage.getItem('quizReconnectToken'),
                 },
                 (reconnectResult: any) => {
-                    if (!reconnectResult?.error) setState(reconnectResult.state);
+                    if (!reconnectResult?.error)
+                        setState(reconnectResult.state);
                 },
             );
-        s.on("connect", rejoin);
+        s.on('connect', rejoin);
         return () => {
-            s.off("connect", rejoin);
+            s.off('connect', rejoin);
         };
     }, [joined, state?.gameCode, name]);
     const join = () => {
-        setError("");
+        setError('');
         connect().emit(
-            "join_game",
+            'join_game',
             {
                 gameCode: codeValue,
                 name,
-                reconnectToken: localStorage.getItem("quizReconnectToken"),
+                reconnectToken: localStorage.getItem('quizReconnectToken'),
             },
             (result: any) => {
                 if (result.error) return setError(result.error);
                 setState(result.state);
-                localStorage.setItem("quizReconnectToken", result.reconnectToken);
+                localStorage.setItem(
+                    'quizReconnectToken',
+                    result.reconnectToken,
+                );
                 setJoined(true);
             },
         );
@@ -169,11 +175,11 @@ function Join() {
         if (selected || !question || time <= 0) return;
         setSelected(key);
         connect().emit(
-            "submit_answer",
+            'submit_answer',
             { questionId: question.id, selectedKey: key },
             (result: any) => {
                 if (result.error) {
-                    setSelected("");
+                    setSelected('');
                     setError(result.error);
                 }
             },
@@ -184,16 +190,19 @@ function Join() {
             <main className="app-shell">
                 <header className="topbar">
                     <a className="brand" href="/">
-                        <Zap size={17} fill="currentColor" /> TECHNICAL AWARENESS
+                        <Zap size={17} fill="currentColor" /> TECHNICAL
+                        AWARENESS
                     </a>
                 </header>
                 <section className="results-wrap">
                     <p className="eyebrow">SESSION COMPLETE</p>
-                    <h1>Nice work, {name || "player"}.</h1>
+                    <h1>Nice work, {name || 'player'}.</h1>
                     <div className="personal-performance">
                         <span>YOUR FINAL POSITION</span>
-                        <strong>#{personalRank?.rank ?? "-"}</strong>
-                        <b>{personalRank?.score?.toLocaleString() ?? 0} points</b>
+                        <strong>#{personalRank?.rank ?? '-'}</strong>
+                        <b>
+                            {personalRank?.score?.toLocaleString() ?? 0} points
+                        </b>
                     </div>
                 </section>
             </main>
@@ -207,12 +216,16 @@ function Join() {
                 <section className="join-card">
                     <p className="eyebrow">PLAYER ENTRY</p>
                     <h1>Step into the room.</h1>
-                    <p className="muted">Enter the code your host shared with you.</p>
+                    <p className="muted">
+                        Enter the code your host shared with you.
+                    </p>
                     <label>
                         GAME CODE
                         <input
                             value={codeValue}
-                            onChange={(e) => setCodeValue(e.target.value.toUpperCase())}
+                            onChange={(e) =>
+                                setCodeValue(e.target.value.toUpperCase())
+                            }
                             placeholder="TECH42"
                             maxLength={8}
                         />
@@ -240,12 +253,12 @@ function Join() {
                     <Zap size={17} fill="currentColor" /> TECHNICAL AWARENESS
                 </a>
                 <span className="live-pill">
-                    <span />{" "}
+                    <span />{' '}
                     {result
                         ? leaderboardOpen
-                            ? "Your result"
-                            : "Answer reveal"
-                        : "Waiting room"}
+                            ? 'Your result'
+                            : 'Answer reveal'
+                        : 'Waiting room'}
                 </span>
             </header>
             <section className="player-view">
@@ -261,8 +274,8 @@ function Join() {
                             {name}.
                         </h1>
                         <p className="muted">
-                            {state?.participants?.length ?? 1} players in the room. The host
-                            will begin shortly.
+                            {state?.participants?.length ?? 1} players in the
+                            room. The host will begin shortly.
                         </p>
                     </div>
                 ) : result && leaderboardOpen ? (
@@ -271,26 +284,32 @@ function Join() {
                         <h1>{name}</h1>
                         <div className="personal-performance">
                             <span>CURRENT POSITION</span>
-                            <strong>#{personalRank?.rank ?? "-"}</strong>
+                            <strong>#{personalRank?.rank ?? '-'}</strong>
                             <b>
                                 <AnimatedScore
                                     value={personalRank?.score ?? result.score}
-                                />{" "}
+                                />{' '}
                                 points
                             </b>
                         </div>
                         <div className="result-detail">
                             <span>RESPONSE TIME</span>
-                            <strong>{result.timeTaken === null ? "No answer" : `${result.timeTaken.toFixed(2)} seconds`}</strong>
+                            <strong>
+                                {result.timeTaken === null
+                                    ? 'No answer'
+                                    : `${result.timeTaken.toFixed(2)} seconds`}
+                            </strong>
                         </div>
-                        {personalRank?.movement !== null && personalRank?.movement !== undefined ? (
+                        {personalRank?.movement !== null &&
+                        personalRank?.movement !== undefined ? (
                             <p
-                                className={`rank-movement ${personalRank.movement > 0
-                                    ? "up"
-                                    : personalRank.movement < 0
-                                        ? "down"
-                                        : "same"
-                                    }`}
+                                className={`rank-movement ${
+                                    personalRank.movement > 0
+                                        ? 'up'
+                                        : personalRank.movement < 0
+                                          ? 'down'
+                                          : 'same'
+                                }`}
                             >
                                 {personalRank.movement > 0 ? (
                                     <>
@@ -300,30 +319,37 @@ function Join() {
                                 ) : personalRank.movement < 0 ? (
                                     <>
                                         <ArrowDown size={16} />
-                                        {Math.abs(personalRank.movement)} positions
+                                        {Math.abs(personalRank.movement)}{' '}
+                                        positions
                                     </>
                                 ) : (
                                     <></>
                                 )}
                             </p>
-                        ) : <p className="muted">Your first ranking is now recorded.</p>}
+                        ) : (
+                            <p className="muted">
+                                Your first ranking is now recorded.
+                            </p>
+                        )}
                     </div>
                 ) : result ? (
                     <div className="question-result">
-                        <p className="eyebrow">QUESTION {result.order} RESULT</p>
+                        <p className="eyebrow">
+                            QUESTION {result.order} RESULT
+                        </p>
                         <h1>
                             {result.isCorrect
-                                ? "Correct!"
+                                ? 'Correct!'
                                 : result.yourAnswer
-                                    ? "Not quite."
-                                    : "Time is up."}
+                                  ? 'Not quite.'
+                                  : 'Time is up.'}
                         </h1>
                         <div className="result-detail">
                             <span>Correct answer</span>
                             <strong>
                                 {result.correctAnswer
                                     ? `${result.correctAnswer.key}) ${result.correctAnswer.text}`
-                                    : "Unavailable"}
+                                    : 'Unavailable'}
                             </strong>
                         </div>
                         <div className="result-detail">
@@ -331,7 +357,7 @@ function Join() {
                             <strong>
                                 {result.yourAnswer
                                     ? `${result.yourAnswer.key}) ${result.yourAnswer.text}`
-                                    : "No answer"}
+                                    : 'No answer'}
                             </strong>
                         </div>
                         <div className="result-metrics">
@@ -339,7 +365,7 @@ function Join() {
                                 <span>TIME TAKEN</span>
                                 <strong>
                                     {result.timeTaken === null
-                                        ? "-"
+                                        ? '-'
                                         : `${result.timeTaken.toFixed(1)}s`}
                                 </strong>
                             </div>
@@ -350,23 +376,23 @@ function Join() {
                         </div>
                         <p>
                             {result.timeTaken === null
-                                ? "No answer was submitted."
+                                ? 'No answer was submitted.'
                                 : `Your response time: ${result.timeTaken.toFixed(2)}s`}
                         </p>
-                        <p className={result.isCorrect ? "submitted" : "error"}>
+                        <p className={result.isCorrect ? 'submitted' : 'error'}>
                             {result.isCorrect
-                                ? "✓ Your answer was correct."
+                                ? '✓ Your answer was correct.'
                                 : result.yourAnswer
-                                    ? "Your answer was incorrect."
-                                    : "No answer was submitted."}
+                                  ? 'Your answer was incorrect.'
+                                  : 'No answer was submitted.'}
                         </p>
                     </div>
                 ) : (
                     <div className="question-view">
                         <div className="question-meta">
                             <span>QUESTION {question.order} / 40</span>
-                            <strong className={time < 5 ? "urgent" : ""}>
-                                {time.toString().padStart(2, "0")}
+                            <strong className={time < 5 ? 'urgent' : ''}>
+                                {time.toString().padStart(2, '0')}
                             </strong>
                         </div>
                         <div className="timer-track">
@@ -374,7 +400,15 @@ function Join() {
                                 style={{
                                     width: `${Math.max(
                                         0,
-                                        Math.min(100, (time / Math.max(1, question.timeLimit)) * 100),
+                                        Math.min(
+                                            100,
+                                            (time /
+                                                Math.max(
+                                                    1,
+                                                    question.timeLimit,
+                                                )) *
+                                                100,
+                                        ),
                                     )}%`,
                                 }}
                             />
@@ -384,7 +418,7 @@ function Join() {
                             {question.options.map((option) => (
                                 <button
                                     key={option.key}
-                                    className={`option ${selected === option.key ? "selected" : ""}`}
+                                    className={`option ${selected === option.key ? 'selected' : ''}`}
                                     onClick={() => answer(option.key)}
                                     disabled={Boolean(selected) || time === 0}
                                 >
@@ -395,7 +429,8 @@ function Join() {
                         </div>
                         {selected && (
                             <p className="submitted">
-                                <Check size={17} /> Answer submitted. Waiting for results...
+                                <Check size={17} /> Answer submitted. Waiting
+                                for results...
                             </p>
                         )}
                     </div>
@@ -428,27 +463,37 @@ function FinalAnalysis({
                     <div className="participant-report">
                         <h3>{selectedParticipant.participant.name}</h3>
                         <p>
-                            Rank {selectedParticipant.summary?.rank} ·{" "}
-                            {selectedParticipant.summary?.correct} / 40 correct ·{" "}
-                            {selectedParticipant.summary?.score.toLocaleString()} points
+                            Rank {selectedParticipant.summary?.rank} ·{' '}
+                            {selectedParticipant.summary?.correct} / 40 correct
+                            ·{' '}
+                            {selectedParticipant.summary?.score.toLocaleString()}{' '}
+                            points
                         </p>
-                        {selectedParticipant.answers.map((answer: any, index: number) => (
-                            <div
-                                className="report-row"
-                                key={`${answer.questionOrder}-${index}`}
-                            >
-                                <span>Q{index + 1}</span>
-                                <strong>{answer.question}</strong>
-                                <span>{answer.selectedAnswer ?? "No answer"}</span>
-                                <span>{answer.isCorrect ? "Correct" : "Incorrect"}</span>
-                                <span>
-                                    {answer.timeTaken === null
-                                        ? "-"
-                                        : `${answer.timeTaken.toFixed(1)}s`}
-                                </span>
-                                <b>{answer.score}</b>
-                            </div>
-                        ))}
+                        {selectedParticipant.answers.map(
+                            (answer: any, index: number) => (
+                                <div
+                                    className="report-row"
+                                    key={`${answer.questionOrder}-${index}`}
+                                >
+                                    <span>Q{index + 1}</span>
+                                    <strong>{answer.question}</strong>
+                                    <span>
+                                        {answer.selectedAnswer ?? 'No answer'}
+                                    </span>
+                                    <span>
+                                        {answer.isCorrect
+                                            ? 'Correct'
+                                            : 'Incorrect'}
+                                    </span>
+                                    <span>
+                                        {answer.timeTaken === null
+                                            ? '-'
+                                            : `${answer.timeTaken.toFixed(1)}s`}
+                                    </span>
+                                    <b>{answer.score}</b>
+                                </div>
+                            ),
+                        )}
                     </div>
                 )}
                 <a
@@ -463,7 +508,7 @@ function FinalAnalysis({
 }
 
 function Host() {
-    const [qrDataUrl, setQrDataUrl] = useState("");
+    const [qrDataUrl, setQrDataUrl] = useState('');
     const [answerProgress, setAnswerProgress] = useState({
         answered: 0,
         total: 0,
@@ -472,7 +517,7 @@ function Host() {
     const [session, setSession] = useState<any>();
     const [leaders, setLeaders] = useState<Leader[]>([]);
     const [selectedParticipant, setSelectedParticipant] = useState<any>();
-    const [error, setError] = useState("");
+    const [error, setError] = useState('');
     const [question, setQuestion] = useState<Question>();
     const [questionStats, setQuestionStats] = useState<any>();
     const [leaderboardOpen, setLeaderboardOpen] = useState(false);
@@ -482,7 +527,7 @@ function Host() {
     const time = useServerCountdown(question);
     useEffect(() => {
         const s = connect();
-        s.on("question_started", (nextQuestion: Question) => {
+        s.on('question_started', (nextQuestion: Question) => {
             // Never expose the correct answer while the question is live.
             // The answer is added back only after `question_ended`.
             const liveQuestion: Question = {
@@ -498,64 +543,68 @@ function Host() {
                 total: session?.participants?.length ?? 0,
             });
         });
-        s.on("question_ended", (stats: any) => {
+        s.on('question_ended', (stats: any) => {
             setQuestionStats(stats);
             setQuestion((current) =>
-                current ? { ...current, correctAnswer: stats.correctAnswer } : current,
+                current
+                    ? { ...current, correctAnswer: stats.correctAnswer }
+                    : current,
             );
         });
-        s.on("leaderboard_updated", setLeaders);
-        s.on("leaderboard_opened", () => setLeaderboardOpen(true));
-        s.on("participant_joined", (participant: any) =>
+        s.on('leaderboard_updated', setLeaders);
+        s.on('leaderboard_opened', () => setLeaderboardOpen(true));
+        s.on('participant_joined', (participant: any) =>
             setSession((current: any) =>
                 current
                     ? {
-                        ...current,
-                        participants: [
-                            ...current.participants.filter(
-                                (item: any) => item.id !== participant.id,
-                            ),
-                            participant,
-                        ],
-                    }
+                          ...current,
+                          participants: [
+                              ...current.participants.filter(
+                                  (item: any) => item.id !== participant.id,
+                              ),
+                              participant,
+                          ],
+                      }
                     : current,
             ),
         );
-        s.on("game_finished", (r: Leader[]) => {
+        s.on('game_finished', (r: Leader[]) => {
             setLeaders(r);
             setEnded(true);
         });
         return () => {
-            s.off("question_started");
-            s.off("question_ended");
-            s.off("leaderboard_updated");
-            s.off("leaderboard_opened");
-            s.off("participant_joined");
-            s.off("game_finished");
+            s.off('question_started');
+            s.off('question_ended');
+            s.off('leaderboard_updated');
+            s.off('leaderboard_opened');
+            s.off('participant_joined');
+            s.off('game_finished');
         };
     }, []);
     const create = async () => {
         try {
             const response = await fetch(`${API}/api/sessions`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ quizId: "technical-awareness" }),
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ quizId: 'technical-awareness' }),
             });
             const body = await response.text();
             const data = body ? JSON.parse(body) : {};
             if (!response.ok)
-                return setError(data.error ?? "Unable to create the live session.");
+                return setError(
+                    data.error ?? 'Unable to create the live session.',
+                );
             setSession(data);
         } catch {
             setError(
-                "Unable to reach the quiz server. Check that the backend is running.",
+                'Unable to reach the quiz server. Check that the backend is running.',
             );
         }
     };
     useEffect(() => {
         if (!session?.id) return;
         connect().emit(
-            "host_join_session",
+            'host_join_session',
             { sessionId: session.id },
             (result: any) => {
                 if (result?.error) return setError(result.error);
@@ -569,17 +618,17 @@ function Host() {
         QRCode.toDataURL(joinUrl, {
             width: 220,
             margin: 1,
-            color: { dark: "#172015", light: "#d2e966" },
+            color: { dark: '#172015', light: '#d2e966' },
         })
             .then(setQrDataUrl)
-            .catch(() => setQrDataUrl(""));
+            .catch(() => setQrDataUrl(''));
     }, [session?.gameCode]);
     useEffect(() => {
         const s = connect();
         const onProgress = (value: any) => setAnswerProgress(value);
-        s.on("answer_progress", onProgress);
+        s.on('answer_progress', onProgress);
         return () => {
-            s.off("answer_progress", onProgress);
+            s.off('answer_progress', onProgress);
         };
     }, []);
     useEffect(() => {
@@ -606,7 +655,8 @@ function Host() {
                         to life.
                     </h1>
                     <p className="muted">
-                        Create a live session from the 40-question Technical Awareness quiz.
+                        Create a live session from the 40-question Technical
+                        Awareness quiz.
                     </p>
                     {error && <p className="error">{error}</p>}
                     <button className="primary full" onClick={create}>
@@ -617,25 +667,25 @@ function Host() {
         );
     const start = () =>
         connect().emit(
-            "host_start_game",
+            'host_start_game',
             { sessionId: session.id },
             (r: any) => r?.error && setError(r.error),
         );
     const viewLeaderboard = () =>
         connect().emit(
-            "host_view_leaderboard",
+            'host_view_leaderboard',
             { sessionId: session.id },
             (r: any) => r?.error && setError(r.error),
         );
     const next = () =>
-        connect().emit("host_next_question", { sessionId: session.id });
+        connect().emit('host_next_question', { sessionId: session.id });
     const end = () => {
         if (
             window.confirm(
-                "End Quiz?\n\nAre you sure you want to end the quiz and show the final results?",
+                'End Quiz?\n\nAre you sure you want to end the quiz and show the final results?',
             )
         )
-            connect().emit("host_end_game", { sessionId: session.id });
+            connect().emit('host_end_game', { sessionId: session.id });
     };
     const copy = () => {
         navigator.clipboard.writeText(session.gameCode);
@@ -679,19 +729,24 @@ function Host() {
             <main className="app-shell host-shell">
                 <header className="topbar">
                     <a className="brand" href="/">
-                        <Zap size={17} fill="currentColor" /> TECHNICAL AWARENESS
+                        <Zap size={17} fill="currentColor" /> TECHNICAL
+                        AWARENESS
                     </a>
                     <span className="live-pill">
                         <span /> Leaderboard
                     </span>
                 </header>
                 <section className="host-content">
-                    <p className="eyebrow">QUESTION {questionStats.order} LEADERBOARD</p>
+                    <p className="eyebrow">
+                        QUESTION {questionStats.order} LEADERBOARD
+                    </p>
                     <h1 className="finish-title">Live leaderboard</h1>
                     <Leaderboard leaders={leaders} />
                     <div className="host-actions">
                         <button className="primary" onClick={next}>
-                            {question.order === 40 ? "Finish quiz" : "Next question"}{" "}
+                            {question.order === 40
+                                ? 'Finish quiz'
+                                : 'Next question'}{' '}
                             <ArrowRight size={17} />
                         </button>
                         <button className="danger" onClick={end}>
@@ -706,17 +761,21 @@ function Host() {
             <main className="app-shell host-shell">
                 <header className="topbar">
                     <a className="brand" href="/">
-                        <Zap size={17} fill="currentColor" /> TECHNICAL AWARENESS
+                        <Zap size={17} fill="currentColor" /> TECHNICAL
+                        AWARENESS
                     </a>
                     <span className="live-pill">
                         <span /> Question result
                     </span>
                 </header>
                 <section className="host-content">
-                    <p className="eyebrow">QUESTION {questionStats.order} COMPLETE</p>
+                    <p className="eyebrow">
+                        QUESTION {questionStats.order} COMPLETE
+                    </p>
                     <h1 className="finish-title">Answer reveal</h1>
                     <p className="correct-answer">
-                        <strong>Correct answer:</strong> {question.correctAnswer?.key}){" "}
+                        <strong>Correct answer:</strong>{' '}
+                        {question.correctAnswer?.key}){' '}
                         {question.correctAnswer?.text}
                     </p>
                     <div className="answer-stats">
@@ -730,7 +789,8 @@ function Host() {
                             Wrong <strong>{questionStats.wrong}</strong>
                         </span>
                         <span>
-                            No Answer <strong>{questionStats.unanswered}</strong>
+                            No Answer{' '}
+                            <strong>{questionStats.unanswered}</strong>
                         </span>
                     </div>
                     <div className="distribution">
@@ -773,7 +833,9 @@ function Host() {
                 <div className="host-header">
                     <div>
                         <p className="eyebrow">LIVE SESSION</p>
-                        <h1>{question ? `Question ${question.order}` : "Lobby"}</h1>
+                        <h1>
+                            {question ? `Question ${question.order}` : 'Lobby'}
+                        </h1>
                     </div>
                     <div className="code-block">
                         <small>GAME CODE</small>
@@ -787,14 +849,19 @@ function Host() {
                     <>
                         <p className="eyebrow">QUIZ COMPLETE</p>
                         <h2 className="finish-title">Final ranking</h2>
-                        <Leaderboard leaders={leaders} onSelect={selectParticipant} />
+                        <Leaderboard
+                            leaders={leaders}
+                            onSelect={selectParticipant}
+                        />
                         {selectedParticipant && (
                             <div className="participant-report">
                                 <h3>{selectedParticipant.participant.name}</h3>
                                 <p>
-                                    Rank {selectedParticipant.summary?.rank} ·{" "}
-                                    {selectedParticipant.summary?.correct} / 40 correct ·{" "}
-                                    {selectedParticipant.summary?.score.toLocaleString()} points
+                                    Rank {selectedParticipant.summary?.rank} ·{' '}
+                                    {selectedParticipant.summary?.correct} / 40
+                                    correct ·{' '}
+                                    {selectedParticipant.summary?.score.toLocaleString()}{' '}
+                                    points
                                 </p>
                                 {selectedParticipant.answers.map(
                                     (answer: any, index: number) => (
@@ -804,11 +871,18 @@ function Host() {
                                         >
                                             <span>Q{index + 1}</span>
                                             <strong>{answer.question}</strong>
-                                            <span>{answer.selectedAnswer ?? "No answer"}</span>
-                                            <span>{answer.isCorrect ? "Correct" : "Incorrect"}</span>
+                                            <span>
+                                                {answer.selectedAnswer ??
+                                                    'No answer'}
+                                            </span>
+                                            <span>
+                                                {answer.isCorrect
+                                                    ? 'Correct'
+                                                    : 'Incorrect'}
+                                            </span>
                                             <span>
                                                 {answer.timeTaken === null
-                                                    ? "-"
+                                                    ? '-'
                                                     : `${answer.timeTaken.toFixed(1)}s`}
                                             </span>
                                             <b>{answer.score}</b>
@@ -829,8 +903,8 @@ function Host() {
                         <div className="live-question">
                             <div className="question-meta">
                                 <span>QUESTION {question.order} / 40</span>
-                                <strong className={time < 5 ? "urgent" : ""}>
-                                    {time.toString().padStart(2, "0")}
+                                <strong className={time < 5 ? 'urgent' : ''}>
+                                    {time.toString().padStart(2, '0')}
                                 </strong>
                             </div>
                             <div className="timer-track">
@@ -838,7 +912,15 @@ function Host() {
                                     style={{
                                         width: `${Math.max(
                                             0,
-                                            Math.min(100, (time / Math.max(1, question.timeLimit)) * 100),
+                                            Math.min(
+                                                100,
+                                                (time /
+                                                    Math.max(
+                                                        1,
+                                                        question.timeLimit,
+                                                    )) *
+                                                    100,
+                                            ),
                                         )}%`,
                                     }}
                                 />
@@ -855,16 +937,24 @@ function Host() {
                             {questionStats && (
                                 <div className="answer-stats">
                                     <span>
-                                        Answered <strong>{questionStats.answered}</strong>
+                                        Answered{' '}
+                                        <strong>
+                                            {questionStats.answered}
+                                        </strong>
                                     </span>
                                     <span>
-                                        Correct <strong>{questionStats.correct}</strong>
+                                        Correct{' '}
+                                        <strong>{questionStats.correct}</strong>
                                     </span>
                                     <span>
-                                        Wrong <strong>{questionStats.wrong}</strong>
+                                        Wrong{' '}
+                                        <strong>{questionStats.wrong}</strong>
                                     </span>
                                     <span>
-                                        No Answer <strong>{questionStats.unanswered}</strong>
+                                        No Answer{' '}
+                                        <strong>
+                                            {questionStats.unanswered}
+                                        </strong>
                                     </span>
                                 </div>
                             )}
@@ -892,18 +982,26 @@ function Host() {
                         <div className="waiting-list">
                             <div className="panel-title">
                                 <span>CONNECTED STUDENTS</span>
-                                <strong>{session.participants.length} / 50</strong>
+                                <strong>
+                                    {session.participants.length} / 50
+                                </strong>
                             </div>
                             {session.participants.length ? (
-                                session.participants.map((p: any, i: number) => (
-                                    <div className="student" key={p.id}>
-                                        <span>{String(i + 1).padStart(2, "0")}</span>
-                                        {p.name}
-                                        <i />
-                                    </div>
-                                ))
+                                session.participants.map(
+                                    (p: any, i: number) => (
+                                        <div className="student" key={p.id}>
+                                            <span>
+                                                {String(i + 1).padStart(2, '0')}
+                                            </span>
+                                            {p.name}
+                                            <i />
+                                        </div>
+                                    ),
+                                )
                             ) : (
-                                <p className="muted">Students will appear here as they join.</p>
+                                <p className="muted">
+                                    Students will appear here as they join.
+                                </p>
                             )}
                             <button
                                 className="primary full"
@@ -921,16 +1019,16 @@ function Host() {
 }
 function App() {
     const path = window.location.pathname;
-    return path.startsWith("/host") ? (
+    return path.startsWith('/host') ? (
         <Host />
-    ) : path.startsWith("/join") ? (
+    ) : path.startsWith('/join') ? (
         <Join />
     ) : (
         <Home />
     );
 }
 
-createRoot(document.getElementById("root")!).render(
+createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
         <App />
     </React.StrictMode>,

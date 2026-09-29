@@ -1,4 +1,4 @@
-import { Gauge, Medal, Timer, Users, XCircle, Zap } from "lucide-react";
+import { Gauge, Medal, Timer, Users, XCircle, Zap } from 'lucide-react';
 
 export function AnalyticsCard({ analytics }: { analytics: any }) {
     if (!analytics?.overall || !analytics?.highlights) {
@@ -9,67 +9,64 @@ export function AnalyticsCard({ analytics }: { analytics: any }) {
 
     const metrics = [
         {
-            label: "Participants",
+            label: 'Participants',
             value: overall.totalParticipants,
-            note: "students joined",
+            note: 'students joined',
             icon: Users,
-            tone: "lime",
+            tone: 'lime',
         },
         {
-            label: "Average score",
+            label: 'Average score',
             value: Math.round(overall.averageScore).toLocaleString(),
-            note: "points per student",
+            note: 'points per student',
             icon: Medal,
-            tone: "gold",
+            tone: 'gold',
         },
         {
-            label: "Average response",
+            label: 'Average response',
             value: `${overall.averageResponseTime.toFixed(1)}s`,
-            note: "time per answer",
+            note: 'time per answer',
             icon: Timer,
-            tone: "blue",
+            tone: 'blue',
         },
         {
-            label: "Participation",
+            label: 'Participation',
             value: `${overall.participationRate.toFixed(1)}%`,
-            note: "answers submitted",
+            note: 'answers submitted',
             icon: Gauge,
-            tone: "coral",
+            tone: 'coral',
         },
     ];
 
     const insights = [
         {
-            label: "Easiest question",
+            label: 'Easiest question',
             item: highlights.easiest,
             icon: Zap,
-            tone: "lime",
-            detail: (item: any) =>
-                `${item.percentCorrect.toFixed(0)}% correct`,
+            tone: 'lime',
+            detail: (item: any) => `${item.percentCorrect.toFixed(0)}% correct`,
         },
         {
-            label: "Hardest question",
+            label: 'Hardest question',
             item: highlights.hardest,
             icon: XCircle,
-            tone: "coral",
-            detail: (item: any) =>
-                `${item.percentCorrect.toFixed(0)}% correct`,
+            tone: 'coral',
+            detail: (item: any) => `${item.percentCorrect.toFixed(0)}% correct`,
         },
         {
-            label: "Fastest question",
+            label: 'Fastest question',
             item: highlights.fastest,
             icon: Timer,
-            tone: "blue",
+            tone: 'blue',
             detail: (item: any) =>
                 `${item.averageResponseTime.toFixed(1)}s average`,
         },
         {
-            label: "Most wrong answers",
+            label: 'Most wrong answers',
             item: highlights.mostWrong,
             icon: XCircle,
-            tone: "gold",
-            detail: (item: any) =>
-                `${item.incorrect} incorrect`,
+            tone: 'gold',
+            detail: (item: any) => `${item.incorrect} incorrect`,
         },
     ];
 
@@ -87,24 +84,19 @@ export function AnalyticsCard({ analytics }: { analytics: any }) {
             </div>
 
             <div className="analytics-grid">
-                {metrics.map(
-                    ({ label, value, note, icon: Icon, tone }) => (
-                        <div
-                            className={`analytics-metric ${tone}`}
-                            key={label}
-                        >
-                            <div className="metric-icon">
-                                <Icon size={18} />
-                            </div>
-
-                            <div>
-                                <span>{label}</span>
-                                <strong>{value}</strong>
-                                <small>{note}</small>
-                            </div>
+                {metrics.map(({ label, value, note, icon: Icon, tone }) => (
+                    <div className={`analytics-metric ${tone}`} key={label}>
+                        <div className="metric-icon">
+                            <Icon size={18} />
                         </div>
-                    )
-                )}
+
+                        <div>
+                            <span>{label}</span>
+                            <strong>{value}</strong>
+                            <small>{note}</small>
+                        </div>
+                    </div>
+                ))}
             </div>
 
             <div className="analytics-divider">
@@ -131,11 +123,12 @@ export function AnalyticsCard({ analytics }: { analytics: any }) {
                                     <small>
                                         {detail(item)}
                                         <em> · </em>
-                                        {item.averageResponseTime.toFixed(1)}s avg
+                                        {item.averageResponseTime.toFixed(1)}s
+                                        avg
                                     </small>
                                 </div>
                             </div>
-                        )
+                        ),
                 )}
             </div>
         </section>

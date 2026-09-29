@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from 'react';
 
 export function AnimatedScore({ value }: { value: number }) {
     const [display, setDisplay] = useState(value);
@@ -20,12 +20,9 @@ export function AnimatedScore({ value }: { value: number }) {
         const tick = (now: number) => {
             const progress = Math.min(1, (now - started) / 550);
 
-            const eased =
-                1 - Math.pow(1 - progress, 3);
+            const eased = 1 - Math.pow(1 - progress, 3);
 
-            const current = Math.round(
-                start + distance * eased
-            );
+            const current = Math.round(start + distance * eased);
 
             displayRef.current = current;
             setDisplay(current);

@@ -3,7 +3,7 @@ export const MAX_SCORE = 1000;
 export function scoreAnswer(
     isCorrect: boolean,
     timeTaken: number | null,
-    timeLimit = 20
+    timeLimit = 20,
 ): number {
     if (
         !isCorrect ||
@@ -16,8 +16,5 @@ export function scoreAnswer(
 
     const remaining = Math.max(0, timeLimit - timeTaken);
 
-    return Math.round(
-        MAX_SCORE *
-        (0.5 + 0.5 * (remaining / timeLimit))
-    );
+    return Math.round(MAX_SCORE * (0.5 + 0.5 * (remaining / timeLimit)));
 }
